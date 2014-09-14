@@ -3,7 +3,8 @@ var system = require("system")
   , fs = require("fs")
 
 // Read in arguments
-var args = ["in", "out", "runningsPath", "cssPath", "highlightCssPath", "paperFormat", "paperOrientation", "paperBorder", "renderDelay", "template", "jsonPath"].reduce(function (args, name, i) {
+var args = ["in", "out", "runningsPath", "cssPath", "highlightCssPath", "paperFormat",
+    "paperOrientation", "paperBorder", "renderDelay", "template",  "jsPath", "jsonPath"].reduce(function (args, name, i) {
   args[name] = system.args[i + 1]
   return args
 }, {})
@@ -15,6 +16,17 @@ page.open(page.libraryPath + "/../" + args.template + "/index.html", function (s
     phantom.exit(1)
     return
   }
+
+  // Add custom JS to the page
+
+ page.evaluate(function(jsPath) {
+     var head = document.querySelector("head");
+
+     var js = document.createElement("script");
+     js.src = jsPath;
+
+     head.appendChild(js);
+ }, [args.jsPath])
 
   // Add custom CSS to the page
   page.evaluate(function(cssPaths) {
